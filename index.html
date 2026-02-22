@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a2e">
+<title>Course Durée 30'</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Oswald:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0f0f1a;
+    --surface: #1a1a2e;
+    --card: #16213e;
+    --accent1: #e94560;
+    --accent2: #0f3460;
+    --accent3: #533483;
+    --green: #06d6a0;
+    --yellow: #ffd166;
+    --orange: #f77f00;
+    --text: #eaeaea;
+    --text-dim: #8888aa;
+    --border: rgba(255,255,255,0.08);
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: radial-gradient(ellipse at 20% 50%, rgba(83,52,131,0.15) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 20%, rgba(233,69,96,0.1) 0%, transparent 50%);
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; min-height: 100vh; padding: 0; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    background: linear-gradient(135deg, var(--accent1), var(--accent3));
+    padding: 20px 20px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+    animation: pulse 4s infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+  .app-header h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    position: relative;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .app-header p {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    margin-top: 4px;
+    position: relative;
+  }
+
+  /* ===== CONTENT ===== */
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent1);
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon { font-size: 1.3rem; }
+
+  /* ===== INPUTS ===== */
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input[type=number], input[type=text], select {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input[type=number]:focus, select:focus {
+    border-color: var(--accent1);
+    background: rgba(233,69,96,0.08);
+  }
+  select option { background: var(--card); }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    text-align: center;
+    font-weight: 700;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent1), var(--accent3));
+    color: white;
+    box-shadow: 0 6px 20px rgba(233,69,96,0.4);
+    margin-top: 8px;
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .btn-green {
+    background: linear-gradient(135deg, var(--green), #04a87f);
+    color: #001a14;
+    box-shadow: 0 6px 20px rgba(6,214,160,0.3);
+  }
+
+  /* ===== SCREEN ACCUEIL ===== */
+  #screen-accueil .app-header { min-height: 200px; display: flex; flex-direction: column; justify-content: center; }
+  .mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+  .mode-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px 16px;
+    text-align: center;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .mode-card:active { transform: scale(0.95); }
+  .mode-card.runner { border-color: rgba(233,69,96,0.4); }
+  .mode-card.runner:hover, .mode-card.runner:active { border-color: var(--accent1); box-shadow: 0 0 20px rgba(233,69,96,0.3); }
+  .mode-card.coach { border-color: rgba(6,214,160,0.4); }
+  .mode-card.coach:hover, .mode-card.coach:active { border-color: var(--green); box-shadow: 0 0 20px rgba(6,214,160,0.3); }
+  .mode-card .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
+  .mode-card h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; letter-spacing: 1px; }
+  .mode-card p { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+
+  /* ===== SCREEN SETUP ===== */
+  .vma-display {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .vma-badge {
+    flex: 1;
+    background: rgba(233,69,96,0.12);
+    border: 1px solid rgba(233,69,96,0.3);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+  }
+  .vma-badge .val {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent1);
+  }
+  .vma-badge .lbl { font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
+
+  /* ===== PLAN BUILDER ===== */
+  .plan-info {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .plan-stat {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  .plan-stat .val { font-family:'Oswald',sans-serif; font-size:1.4rem; font-weight:700; }
+  .plan-stat .lbl { font-size:0.72rem; color:var(--text-dim); }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .timeline::-webkit-scrollbar { width: 4px; }
+  .timeline::-webkit-scrollbar-track { background: transparent; }
+  .timeline::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+  .timeline-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .timeline-row.current-edit {
+    background: rgba(233,69,96,0.12);
+    border-color: rgba(233,69,96,0.4);
+  }
+  .timeline-row .min-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    min-width: 32px;
+  }
+  .timeline-row .speed-badge {
+    flex: 1;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .speed-rest { background: rgba(136,136,170,0.2); color: var(--text-dim); }
+  .speed-v1 { background: rgba(255,209,102,0.2); color: var(--yellow); }
+  .speed-v2 { background: rgba(247,127,0,0.2); color: var(--orange); }
+  .speed-v3 { background: rgba(233,69,96,0.25); color: var(--accent1); }
+  .speed-v4 { background: rgba(83,52,131,0.35); color: #b69fff; }
+  .speed-v5 { background: rgba(6,214,160,0.2); color: var(--green); }
+
+  .timeline-row .dist-badge {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    min-width: 60px;
+    text-align: right;
+    color: var(--text-dim);
+  }
+
+  /* Speed editor panel */
+  .speed-editor {
+    background: rgba(233,69,96,0.08);
+    border: 1px solid rgba(233,69,96,0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .speed-editor h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--accent1);
+  }
+  .speed-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .speed-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 8px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.15s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .speed-btn:active { transform: scale(0.93); }
+  .speed-btn.selected { box-shadow: 0 0 0 3px white; }
+  .speed-btn.s-rest { background: rgba(136,136,170,0.3); color: var(--text); }
+  .speed-btn.s-v1 { background: rgba(255,209,102,0.3); color: var(--yellow); }
+  .speed-btn.s-v2 { background: rgba(247,127,0,0.3); color: var(--orange); }
+  .speed-btn.s-v3 { background: rgba(233,69,96,0.4); color: var(--accent1); }
+  .speed-btn.s-v4 { background: rgba(83,52,131,0.5); color: #b69fff; }
+  .speed-btn.s-v5 { background: rgba(6,214,160,0.3); color: var(--green); }
+
+  .apply-range {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .apply-range input[type=number] {
+    width: 60px;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  .btn-apply {
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    background: var(--accent1);
+    color: white;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  /* Validation */
+  .validation-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .validation-bar.ok { background: rgba(6,214,160,0.15); color: var(--green); }
+  .validation-bar.err { background: rgba(233,69,96,0.15); color: var(--accent1); }
+
+  /* ===== SCREEN SESSION ===== */
+  .session-top {
+    background: linear-gradient(135deg, var(--surface), var(--card));
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .big-timer {
+    font-family: 'Oswald', sans-serif;
+    font-size: 4.5rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--text);
+    text-shadow: 0 0 30px rgba(233,69,96,0.4);
+  }
+  .session-progress {
+    display: flex;
+    gap: 2px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .prog-dot {
+    flex: 1;
+    min-width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+    transition: background 0.3s;
+  }
+  .prog-dot.done { background: var(--green); }
+  .prog-dot.current { background: var(--accent1); animation: blink 1s infinite; }
+  .prog-dot.rest { background: rgba(136,136,170,0.5); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* Current minute card */
+  .current-minute-card {
+    margin: 16px;
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .current-minute-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    background: radial-gradient(circle at 50% 0%, white, transparent 70%);
+  }
+  .current-minute-card .min-label {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+  .current-minute-card .speed-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .current-minute-card .speed-detail {
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+  .current-minute-card .distance-needed {
+    margin-top: 12px;
+    font-size: 1.4rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+  }
+  .current-minute-card .distance-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  /* Minute countdown */
+  .minute-countdown {
+    font-family: 'Oswald', sans-serif;
+    font-size: 3rem;
+    text-align: center;
+    color: var(--accent1);
+    margin: 0 16px;
+  }
+  .min-progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    margin: 8px 16px;
+    overflow: hidden;
+  }
+  .min-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent3));
+    transition: width 1s linear;
+  }
+
+  /* Next minute */
+  .next-min-row {
+    margin: 0 16px 16px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border);
+  }
+  .next-min-row .nxt-label { font-size: 0.8rem; color: var(--text-dim); }
+  .next-min-row .nxt-speed { font-family: 'Oswald', sans-serif; font-size: 1.1rem; }
+
+  /* Coach feedback */
+  .coach-section {
+    padding: 0 16px 16px;
+  }
+  .coach-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .coach-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .coach-btn {
+    border: none;
+    border-radius: 16px;
+    padding: 16px 8px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.15s;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .coach-btn:active { transform: scale(0.93); }
+  .coach-btn.slow {
+    background: linear-gradient(135deg, #3a86ff, #0a5cd5);
+    color: white;
+    box-shadow: 0 4px 15px rgba(58,134,255,0.3);
+  }
+  .coach-btn.ok {
+    background: linear-gradient(135deg, var(--green), #04a87f);
+    color: #001a14;
+    box-shadow: 0 4px 15px rgba(6,214,160,0.3);
+  }
+  .coach-btn.fast {
+    background: linear-gradient(135deg, var(--accent1), #c0392b);
+    color: white;
+    box-shadow: 0 4px 15px rgba(233,69,96,0.3);
+  }
+  .coach-btn .btn-icon { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+  .coach-btn .btn-text { font-size: 0.85rem; }
+  .coach-btn .coach-dist { font-size: 0.7rem; opacity: 0.75; margin-top: 2px; }
+
+  /* Coach feedback animation */
+  .coach-feedback-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .coach-feedback-overlay.show { opacity: 1; }
+  .coach-feedback-msg {
+    background: rgba(0,0,0,0.85);
+    border-radius: 20px;
+    padding: 24px 40px;
+    text-align: center;
+    border: 3px solid;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+  }
+  .coach-feedback-overlay.show .coach-feedback-msg { transform: scale(1); }
+  .coach-feedback-msg .fb-icon { font-size: 3rem; }
+  .coach-feedback-msg .fb-text { font-family:'Oswald',sans-serif; font-size:1.5rem; margin-top:8px; }
+
+  /* Session controls */
+  .session-controls {
+    padding: 0 16px 24px;
+    display: flex;
+    gap: 10px;
+  }
+  .btn-pause {
+    flex: 1;
+    border: none;
+    border-radius: 16px;
+    padding: 14px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid var(--border);
+  }
+  .btn-stop {
+    border: none;
+    border-radius: 16px;
+    padding: 14px 20px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    background: rgba(233,69,96,0.2);
+    color: var(--accent1);
+    border: 1px solid rgba(233,69,96,0.3);
+  }
+
+  /* ===== SCREEN RESULTS ===== */
+  .result-header {
+    background: linear-gradient(135deg, var(--green), #04a87f);
+    padding: 30px 20px;
+    text-align: center;
+    color: #001a14;
+  }
+  .result-header h2 { font-family:'Oswald',sans-serif; font-size:2rem; }
+  .result-header p { font-size:0.9rem; margin-top:4px; opacity:0.8; }
+  .result-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .result-stat {
+    background: var(--card);
+    border-radius:16px;
+    padding:16px;
+    text-align:center;
+    border:1px solid var(--border);
+  }
+  .result-stat .val { font-family:'Oswald',sans-serif; font-size:2rem; font-weight:700; }
+  .result-stat .lbl { font-size:0.75rem; color:var(--text-dim); margin-top:4px; }
+  .feedback-log { margin-top:8px; }
+  .fb-item {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:10px;
+    margin-bottom:4px;
+    font-size:0.85rem;
+    background:rgba(255,255,255,0.04);
+  }
+  .fb-item.ok { border-left:3px solid var(--green); }
+  .fb-item.slow { border-left:3px solid #3a86ff; }
+  .fb-item.fast { border-left:3px solid var(--accent1); }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .screen.active { animation: fadeIn 0.4s ease; }
+
+  /* ===== UTILS ===== */
+  .mt8 { margin-top:8px; }
+  .mt16 { margin-top:16px; }
+  .text-center { text-align:center; }
+  .text-dim { color:var(--text-dim); font-size:0.85rem; }
+
+  /* Touch zones warning */
+  .zone-warning {
+    background: rgba(255,209,102,0.12);
+    border: 1px solid rgba(255,209,102,0.3);
+    border-radius:12px;
+    padding:10px 14px;
+    font-size:0.82rem;
+    color:var(--yellow);
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom:12px;
+  }
+
+  /* PACE STEADY WARNING */
+  .steady-warning {
+    display:none;
+    background: rgba(255,209,102,0.15);
+    border:2px solid var(--yellow);
+    border-radius:16px;
+    margin:0 16px 12px;
+    padding:12px 16px;
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-size:1.1rem;
+    color:var(--yellow);
+    animation:pulse-yellow 1s infinite;
+  }
+  @keyframes pulse-yellow { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .steady-warning.show { display:block; }
+
+  /* Back button */
+  .back-btn {
+    background:none;
+    border:none;
+    color:var(--text);
+    font-size:1.5rem;
+    cursor:pointer;
+    padding:4px 8px;
+    border-radius:8px;
+    opacity:0.7;
+  }
+  .header-row {
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  /* Scrollbar for timeline */
+  .timeline-container {
+    position:relative;
+  }
+  .scroll-hint {
+    text-align:center;
+    color:var(--text-dim);
+    font-size:0.75rem;
+    margin-top:6px;
+    opacity:0.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SCREEN ACCUEIL ===== -->
+<div class="screen active" id="screen-accueil">
+  <div class="app-header">
+    <h1>🏃 COURSE DURÉE</h1>
+    <p>Séance 30 minutes · Travail par allures</p>
+  </div>
+  <div class="content">
+    <p class="text-dim mt8" style="margin-bottom:16px;text-align:center;">Choisissez votre rôle pour commencer</p>
+    <div class="mode-cards">
+      <div class="mode-card runner" onclick="goTo('setup-runner')">
+        <span class="emoji">🏃</span>
+        <h3 style="color:var(--accent1)">COUREUR</h3>
+        <p>Créer et réaliser mon projet de course</p>
+      </div>
+      <div class="mode-card coach" onclick="goTo('setup-coach')">
+        <span class="emoji">📋</span>
+        <h3 style="color:var(--green)">COACH</h3>
+        <p>Suivre et guider mon coureur</p>
+      </div>
+    </div>
+
+    <div class="card mt16">
+      <div class="card-title"><span class="icon">ℹ️</span> Comment ça marche ?</div>
+      <div style="font-size:0.85rem;color:var(--text-dim);line-height:1.6;">
+        <p>Le <strong style="color:var(--text)">coureur</strong> saisit sa VMA et construit son projet de 30 min : alternance de minutes de course à différentes vitesses et de minutes de récupération.</p>
+        <br>
+        <p>Le <strong style="color:var(--text)">coach</strong> vérifie l'allure à chaque passage dans la zone et donne un feedback immédiat : trop vite, correct ou trop lent.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN SETUP RUNNER ===== -->
+<div class="screen" id="screen-setup-runner">
+  <div class="app-header" style="padding:16px 20px 24px;">
+    <div class="header-row">
+      <button class="back-btn" onclick="goTo('accueil')">←</button>
+      <div>
+        <h1 style="font-size:1.5rem;">🏃 MON PROFIL</h1>
+        <p style="margin-top:2px;">Étape 1 : Saisir ma VMA</p>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-title"><span class="icon">⚡</span> Ma VMA</div>
+      <label>VMA (Vitesse Maximale Aérobie) en km/h</label>
+      <input type="number" id="vma-input" min="6" max="25" step="0.5" value="12" oninput="updateVmaDisplay()">
+      <div class="vma-display" id="vma-badges"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📍</span> Terrain</div>
+      <label>Distance de la zone de contrôle (m) — aller depuis le départ</label>
+      <input type="number" id="zone-dist" min="50" max="400" step="10" value="100">
+      <p class="text-dim mt8">Le coach se place à cette distance du départ. Les temps de passage sont calculés pour cette zone.</p>
+    </div>
+
+    <button class="btn btn-primary" onclick="goTo('plan-builder')">CONSTRUIRE MON PLAN →</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN PLAN BUILDER ===== -->
+<div class="screen" id="screen-plan-builder">
+  <div class="app-header" style="padding:16px 20px 24px;">
+    <div class="header-row">
+      <button class="back-btn" onclick="goTo('setup-runner')">←</button>
+      <div>
+        <h1 style="font-size:1.5rem;">📋 MON PLAN</h1>
+        <p style="margin-top:2px;">30 minutes · Étape 2 : Construire mon projet</p>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- Vitesses disponibles -->
+    <div class="speed-editor">
+      <h3>⚡ Définir mes vitesses de course</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label>% VMA min</label>
+          <input type="number" id="pct-min" value="50" min="40" max="95" step="5" oninput="updateSpeedLevels()">
+        </div>
+        <div>
+          <label>% VMA max</label>
+          <input type="number" id="pct-max" value="90" min="50" max="110" step="5" oninput="updateSpeedLevels()">
+        </div>
+      </div>
+      <div id="speed-level-config"></div>
+    </div>
+
+    <!-- Info plan -->
+    <div class="plan-info" id="plan-stats">
+      <div class="plan-stat"><div class="val" id="stat-minutes">30</div><div class="lbl">minutes</div></div>
+      <div class="plan-stat"><div class="val" id="stat-speeds" style="color:var(--accent1)">0</div><div class="lbl">vitesses diff.</div></div>
+      <div class="plan-stat"><div class="val" id="stat-rest">0</div><div class="lbl">min récup</div></div>
+      <div class="plan-stat"><div class="val" id="stat-dist">0</div><div class="lbl">m estimé</div></div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🕐</span> Plan minute par minute
+        <span style="font-size:0.75rem;color:var(--text-dim);font-family:'Nunito',sans-serif;font-weight:normal;margin-left:auto;">Appuyez pour modifier</span>
+      </div>
+
+      <!-- Quick fill -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <button style="flex:1;min-width:120px;" class="btn-apply" onclick="quickFill()">Remplissage auto</button>
+        <button style="flex:1;min-width:120px;" class="btn-apply" style="background:var(--accent3);" onclick="clearPlan()">Tout effacer</button>
+      </div>
+
+      <div class="apply-range">
+        <span>Appliquer minutes</span>
+        <input type="number" id="range-from" value="1" min="1" max="30">
+        <span>à</span>
+        <input type="number" id="range-to" value="30" min="1" max="30">
+        <button class="btn-apply" id="apply-range-btn" onclick="applyRange()">OK</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div id="selected-speed-display" style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-dim);font-style:italic;">
+          ↓ Sélectionnez une vitesse ci-dessous, puis tapez sur les minutes
+        </div>
+      </div>
+
+      <!-- Speed selector -->
+      <div id="speed-selector" class="speed-grid" style="margin-bottom:12px;"></div>
+
+      <div class="timeline-container">
+        <div class="timeline" id="timeline"></div>
+        <div class="scroll-hint">↕ Faites défiler pour voir toutes les minutes</div>
+      </div>
+    </div>
+
+    <div id="plan-validation" class="validation-bar"></div>
+
+    <button class="btn btn-primary" id="btn-launch" onclick="launchSession()" disabled>LANCER LA SÉANCE →</button>
+    <button class="btn btn-secondary" onclick="goTo('accueil')" style="margin-top:8px;">Retour accueil</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN SETUP COACH ===== -->
+<div class="screen" id="screen-setup-coach">
+  <div class="app-header" style="padding:16px 20px 24px;">
+    <div class="header-row">
+      <button class="back-btn" onclick="goTo('accueil')">←</button>
+      <div>
+        <h1 style="font-size:1.5rem;">📋 COACH</h1>
+        <p style="margin-top:2px;">Rejoindre la séance</p>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-title"><span class="icon">🔗</span> Code de séance</div>
+      <p class="text-dim" style="margin-bottom:12px;">Saisissez le code affiché sur l'appareil du coureur</p>
+      <label>Code (6 caractères)</label>
+      <input type="text" id="coach-code-input" maxlength="6" placeholder="ex: AB12CD" style="text-transform:uppercase;letter-spacing:4px;font-size:1.5rem;text-align:center;">
+      <button class="btn btn-green mt16" onclick="coachJoin()">REJOINDRE →</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span> Ou</div>
+      <p class="text-dim" style="margin-bottom:12px;">Si vous êtes sur le même appareil que le coureur</p>
+      <button class="btn btn-secondary" onclick="coachSameDevice()">Même appareil →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN SESSION ===== -->
+<div class="screen" id="screen-session">
+  <!-- Top: timer global -->
+  <div class="session-top">
+    <div class="big-timer" id="global-timer">30:00</div>
+    <div class="session-progress" id="session-progress"></div>
+  </div>
+
+  <!-- Current minute card -->
+  <div class="current-minute-card" id="current-min-card">
+    <div class="min-label" id="cur-min-label">MINUTE 1</div>
+    <div class="speed-label" id="cur-speed-label">—</div>
+    <div class="speed-detail" id="cur-speed-detail">—</div>
+    <div class="distance-needed" id="cur-distance">—</div>
+    <div class="distance-label" id="cur-distance-label">à parcourir</div>
+  </div>
+
+  <!-- Minute countdown -->
+  <div class="minute-countdown" id="minute-countdown">1:00</div>
+  <div class="min-progress-bar"><div class="min-progress-fill" id="min-progress-fill" style="width:100%"></div></div>
+
+  <!-- Steady warning (10s avant fin) -->
+  <div class="steady-warning" id="steady-warning">⚠️ MAINTENIR L'ALLURE — Zone dans <span id="zone-countdown"></span>s</div>
+
+  <!-- Next minute -->
+  <div class="next-min-row">
+    <div>
+      <div class="nxt-label">MINUTE SUIVANTE</div>
+      <div class="nxt-speed" id="next-speed-label">—</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="nxt-label">DISTANCE</div>
+      <div class="nxt-speed" id="next-distance-label">—</div>
+    </div>
+  </div>
+
+  <!-- Coach section -->
+  <div class="coach-section">
+    <div class="zone-warning">
+      <span>📍</span>
+      <span id="zone-info-text">Vérifiez l'allure à chaque passage en zone</span>
+    </div>
+    <div class="coach-title">🎯 Feedback du coach</div>
+    <div class="coach-buttons">
+      <button class="coach-btn slow" onclick="coachFeedback('slow')">
+        <span class="btn-icon">🐢</span>
+        <span class="btn-text">TROP<br>LENT</span>
+        <span class="coach-dist" id="slow-dist"></span>
+      </button>
+      <button class="coach-btn ok" onclick="coachFeedback('ok')">
+        <span class="btn-icon">✅</span>
+        <span class="btn-text">BONNE<br>ALLURE</span>
+        <span class="coach-dist" id="ok-dist"></span>
+      </button>
+      <button class="coach-btn fast" onclick="coachFeedback('fast')">
+        <span class="btn-icon">⚡</span>
+        <span class="btn-text">TROP<br>VITE</span>
+        <span class="coach-dist" id="fast-dist"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="session-controls">
+    <button class="btn-pause" id="btn-pause" onclick="togglePause()">⏸ PAUSE</button>
+    <button class="btn-stop" onclick="stopSession()">⏹</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN RESULTS ===== -->
+<div class="screen" id="screen-results">
+  <div class="result-header">
+    <div style="font-size:3rem;">🏁</div>
+    <h2>SÉANCE TERMINÉE !</h2>
+    <p id="result-summary">Bravo pour cette séance !</p>
+  </div>
+  <div class="content">
+    <div class="result-stats" id="result-stats"></div>
+    <div class="card mt16">
+      <div class="card-title"><span class="icon">📊</span> Retours du coach</div>
+      <div class="feedback-log" id="feedback-log"></div>
+    </div>
+    <button class="btn btn-primary mt16" onclick="goTo('accueil')">NOUVELLE SÉANCE</button>
+  </div>
+</div>
+
+<!-- Coach feedback overlay -->
+<div class="coach-feedback-overlay" id="coach-overlay">
+  <div class="coach-feedback-msg" id="coach-msg">
+    <div class="fb-icon" id="fb-icon"></div>
+    <div class="fb-text" id="fb-text"></div>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+const state = {
+  vma: 12,
+  zoneDist: 100,
+  plan: Array(30).fill(null), // null=repos, {pct, kmh, name}
+  sessionRunning: false,
+  sessionPaused: false,
+  totalElapsed: 0, // seconds
+  minuteElapsed: 0,
+  currentMinute: 0, // 0-indexed
+  feedbackLog: [],
+  sessionInterval: null,
+  selectedSpeed: null,
+  speedLevels: [],
+};
+
+// ===== NAVIGATION =====
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screenId).classList.add('active');
+  window.scrollTo(0,0);
+
+  if (screenId === 'plan-builder') initPlanBuilder();
+}
+
+// ===== VMA DISPLAY =====
+function updateVmaDisplay() {
+  state.vma = parseFloat(document.getElementById('vma-input').value) || 12;
+  const container = document.getElementById('vma-badges');
+  const pcts = [50, 60, 70, 80, 90, 100];
+  container.innerHTML = pcts.map(p => {
+    const kmh = (state.vma * p / 100).toFixed(1);
+    return `<div class="vma-badge" style="flex:0 0 30%;">
+      <div class="val">${kmh}</div>
+      <div class="lbl">${p}% VMA<br>km/h</div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('vma-input').addEventListener('input', updateVmaDisplay);
+updateVmaDisplay();
+
+// ===== SPEED LEVELS =====
+const SPEED_CLASSES = ['s-rest','s-v1','s-v2','s-v3','s-v4','s-v5'];
+const BADGE_CLASSES = ['speed-rest','speed-v1','speed-v2','speed-v3','speed-v4','speed-v5'];
+
+function updateSpeedLevels() {
+  const pMin = parseInt(document.getElementById('pct-min')?.value) || 50;
+  const pMax = parseInt(document.getElementById('pct-max')?.value) || 90;
+  const step = pMax > pMin ? Math.round((pMax - pMin) / 4 / 5) * 5 || 10 : 10;
+
+  state.speedLevels = [];
+  for (let p = pMin; p <= pMax; p += step) {
+    if (state.speedLevels.length < 5) {
+      const kmh = (state.vma * p / 100);
+      state.speedLevels.push({ pct: p, kmh, name: `${p}% VMA` });
+    }
+  }
+  // ensure max is included
+  if (state.speedLevels[state.speedLevels.length-1]?.pct !== pMax && state.speedLevels.length < 5) {
+    state.speedLevels.push({ pct: pMax, kmh: state.vma * pMax / 100, name: `${pMax}% VMA` });
+  }
+
+  renderSpeedSelector();
+  renderTimeline();
+  updatePlanStats();
+}
+
+function renderSpeedSelector() {
+  const container = document.getElementById('speed-selector');
+  if (!container) return;
+
+  const levels = [{name:'REPOS', pct:0, kmh:0, isRest:true}, ...state.speedLevels];
+  container.innerHTML = levels.map((lvl, i) => {
+    const cls = SPEED_CLASSES[i] || 's-v5';
+    const dist = lvl.isRest ? 'Récupération' : `${lvl.kmh.toFixed(1)} km/h · ${distPerMin(lvl.kmh)}m/min`;
+    const sel = state.selectedSpeed === (lvl.isRest ? 'rest' : i-1) ? 'selected' : '';
+    return `<button class="speed-btn ${cls} ${sel}" onclick="selectSpeed(${lvl.isRest ? "'rest'" : i-1},'${lvl.name}')">
+      <div>${lvl.name}</div>
+      <div style="font-size:0.7rem;opacity:0.75;">${dist}</div>
+    </button>`;
+  }).join('');
+}
+
+function selectSpeed(idx, name) {
+  state.selectedSpeed = idx;
+  document.getElementById('selected-speed-display').textContent = `Vitesse sélectionnée : ${name} — Tapez sur les minutes pour appliquer`;
+  renderSpeedSelector();
+}
+
+// ===== PLAN BUILDER =====
+function initPlanBuilder() {
+  state.vma = parseFloat(document.getElementById('vma-input').value) || 12;
+  state.zoneDist = parseInt(document.getElementById('zone-dist').value) || 100;
+  updateSpeedLevels();
+}
+
+function distPerMin(kmh) {
+  return Math.round(kmh * 1000 / 60);
+}
+
+function renderTimeline() {
+  const container = document.getElementById('timeline');
+  if (!container) return;
+
+  container.innerHTML = state.plan.map((slot, i) => {
+    let badgeCls, label, dist;
+    if (!slot) {
+      badgeCls = BADGE_CLASSES[0];
+      label = 'REPOS';
+      dist = '';
+    } else {
+      const idx = state.speedLevels.findIndex(l => l.pct === slot.pct);
+      badgeCls = BADGE_CLASSES[Math.min(idx+1, BADGE_CLASSES.length-1)];
+      label = `${slot.pct}% VMA · ${slot.kmh.toFixed(1)} km/h`;
+      dist = `${distPerMin(slot.kmh)}m`;
+    }
+    const isCurrent = state.selectedSpeed !== null;
+    return `<div class="timeline-row" onclick="applyToMinute(${i})">
+      <div class="min-num">M${i+1}</div>
+      <div class="speed-badge ${badgeCls}">${label}</div>
+      <div class="dist-badge">${dist}</div>
+    </div>`;
+  }).join('');
+
+  validatePlan();
+  updatePlanStats();
+}
+
+function applyToMinute(idx) {
+  if (state.selectedSpeed === null) return;
+  if (state.selectedSpeed === 'rest') {
+    state.plan[idx] = null;
+  } else {
+    const lvl = state.speedLevels[state.selectedSpeed];
+    if (lvl) state.plan[idx] = { ...lvl };
+  }
+  renderTimeline();
+}
+
+function applyRange() {
+  const from = parseInt(document.getElementById('range-from').value) - 1;
+  const to = parseInt(document.getElementById('range-to').value) - 1;
+  if (state.selectedSpeed === null) { alert('Sélectionnez d\'abord une vitesse'); return; }
+  for (let i = from; i <= to && i < 30; i++) {
+    applyToMinute(i);
+  }
+}
+
+function quickFill() {
+  if (state.speedLevels.length < 3) { alert('Définissez au moins 3 vitesses'); return; }
+  const pattern = [];
+  // alternance : 2 course + 1 repos
+  let si = 0;
+  for (let i = 0; i < 30; i++) {
+    if ((i + 1) % 3 === 0) { pattern.push(null); }
+    else {
+      const lvl = state.speedLevels[si % state.speedLevels.length];
+      pattern.push({ ...lvl });
+      si++;
+    }
+  }
+  state.plan = pattern;
+  renderTimeline();
+}
+
+function clearPlan() {
+  state.plan = Array(30).fill(null);
+  renderTimeline();
+}
+
+function updatePlanStats() {
+  const speeds = new Set(state.plan.filter(Boolean).map(s => s.pct));
+  const restCount = state.plan.filter(s => s === null).length;
+  const totalDist = state.plan.reduce((acc, s) => acc + (s ? distPerMin(s.kmh) : 0), 0);
+  if (document.getElementById('stat-speeds')) {
+    document.getElementById('stat-speeds').textContent = speeds.size;
+    document.getElementById('stat-rest').textContent = restCount;
+    document.getElementById('stat-dist').textContent = Math.round(totalDist/100)/10 + 'km';
+  }
+}
+
+function validatePlan() {
+  const speeds = new Set(state.plan.filter(Boolean).map(s => s.pct));
+  const hasCourse = state.plan.some(Boolean);
+  const bar = document.getElementById('plan-validation');
+  const btn = document.getElementById('btn-launch');
+
+  if (!bar) return;
+
+  if (!hasCourse) {
+    bar.className = 'validation-bar err';
+    bar.innerHTML = '❌ Le plan est vide — ajoutez des minutes de course';
+    btn.disabled = true;
+  } else if (speeds.size < 3) {
+    bar.className = 'validation-bar err';
+    bar.innerHTML = `❌ Il faut au moins 3 vitesses différentes (actuellement ${speeds.size})`;
+    btn.disabled = true;
+  } else {
+    bar.className = 'validation-bar ok';
+    bar.innerHTML = `✅ Plan valide — ${speeds.size} vitesses différentes, ${state.plan.filter(Boolean).length} min de course`;
+    btn.disabled = false;
+  }
+}
+
+// ===== SESSION =====
+function launchSession() {
+  state.sessionRunning = true;
+  state.sessionPaused = false;
+  state.totalElapsed = 0;
+  state.minuteElapsed = 0;
+  state.currentMinute = 0;
+  state.feedbackLog = [];
+  goTo('session');
+  buildProgressDots();
+  updateSessionDisplay();
+  startTimer();
+}
+
+function buildProgressDots() {
+  const container = document.getElementById('session-progress');
+  container.innerHTML = state.plan.map((slot, i) => {
+    const cls = slot ? '' : 'rest';
+    return `<div class="prog-dot ${cls}" id="dot-${i}"></div>`;
+  }).join('');
+}
+
+function updateProgressDots() {
+  state.plan.forEach((_, i) => {
+    const dot = document.getElementById(`dot-${i}`);
+    if (!dot) return;
+    dot.className = 'prog-dot' + (state.plan[i] ? '' : ' rest');
+    if (i < state.currentMinute) dot.classList.add('done');
+    else if (i === state.currentMinute) dot.classList.add('current');
+  });
+}
+
+function getSlot(idx) { return idx < 30 ? state.plan[idx] : null; }
+
+function slotLabel(slot) {
+  if (!slot) return 'RÉCUPÉRATION';
+  return `${slot.pct}% VMA`;
+}
+function slotDetail(slot) {
+  if (!slot) return 'Marche ou jogging léger';
+  return `${slot.kmh.toFixed(1)} km/h`;
+}
+function slotDist(slot) {
+  if (!slot) return '—';
+  return `${distPerMin(slot.kmh)} m`;
+}
+
+// Color per slot
+function slotColor(slot, opacity=1) {
+  if (!slot) return `rgba(136,136,170,${opacity})`;
+  const colors = ['rgba(255,209,102,', 'rgba(247,127,0,', 'rgba(233,69,96,', 'rgba(83,52,131,', 'rgba(6,214,160,'];
+  const idx = state.speedLevels.findIndex(l => l.pct === slot.pct);
+  return (colors[Math.min(idx, colors.length-1)] || colors[0]) + opacity + ')';
+}
+
+function updateSessionDisplay() {
+  const min = state.currentMinute;
+  const slot = getSlot(min);
+  const nextSlot = getSlot(min + 1);
+  const secsLeft = 60 - state.minuteElapsed;
+  const totalLeft = 30*60 - state.totalElapsed;
+
+  // Global timer
+  const gm = Math.floor(totalLeft / 60);
+  const gs = totalLeft % 60;
+  document.getElementById('global-timer').textContent = `${String(gm).padStart(2,'0')}:${String(gs).padStart(2,'0')}`;
+
+  // Minute countdown
+  document.getElementById('minute-countdown').textContent = `${Math.floor(secsLeft/60)}:${String(secsLeft%60).padStart(2,'0')}`;
+  document.getElementById('min-progress-fill').style.width = (secsLeft/60*100) + '%';
+
+  // Current card
+  const card = document.getElementById('current-min-card');
+  card.style.borderColor = slotColor(slot);
+  card.style.background = `linear-gradient(135deg, ${slotColor(slot, 0.12)}, ${slotColor(slot, 0.06)})`;
+
+  document.getElementById('cur-min-label').textContent = `MINUTE ${min+1} / 30`;
+  document.getElementById('cur-speed-label').textContent = slotLabel(slot);
+  document.getElementById('cur-speed-detail').textContent = slotDetail(slot);
+  document.getElementById('cur-distance').textContent = slotDist(slot);
+  document.getElementById('cur-distance-label').textContent = slot ? `à parcourir en 1 minute` : '';
+
+  // Next
+  document.getElementById('next-speed-label').textContent = nextSlot ? slotLabel(nextSlot) : (min < 29 ? 'RÉCUPÉRATION' : 'FIN DE SÉANCE');
+  document.getElementById('next-distance-label').textContent = nextSlot ? slotDist(nextSlot) : '—';
+
+  // Zone info
+  document.getElementById('zone-info-text').textContent = `Zone à ${state.zoneDist}m du départ — ${slot ? `Temps passage ~${Math.round(state.zoneDist/(slot.kmh*1000/3600))}s` : 'Récupération en cours'}`;
+
+  // Coach distances (hints)
+  if (slot) {
+    const tExpected = Math.round(state.zoneDist / (slot.kmh * 1000/3600));
+    document.getElementById('slow-dist').textContent = `> ${tExpected}s`;
+    document.getElementById('ok-dist').textContent = `≈ ${tExpected}s`;
+    document.getElementById('fast-dist').textContent = `< ${tExpected}s`;
+  } else {
+    document.getElementById('slow-dist').textContent = '';
+    document.getElementById('ok-dist').textContent = '';
+    document.getElementById('fast-dist').textContent = '';
+  }
+
+  // Steady warning (15s avant fin de minute)
+  const steadyEl = document.getElementById('steady-warning');
+  const zcEl = document.getElementById('zone-countdown');
+  if (secsLeft <= 15 && secsLeft > 0 && slot) {
+    steadyEl.classList.add('show');
+    zcEl.textContent = secsLeft;
+  } else {
+    steadyEl.classList.remove('show');
+  }
+
+  updateProgressDots();
+}
+
+function startTimer() {
+  state.sessionInterval = setInterval(() => {
+    if (state.sessionPaused) return;
+
+    state.totalElapsed++;
+    state.minuteElapsed++;
+
+    if (state.minuteElapsed >= 60) {
+      state.minuteElapsed = 0;
+      state.currentMinute++;
+      if (state.currentMinute >= 30) {
+        endSession();
+        return;
+      }
+    }
+
+    updateSessionDisplay();
+  }, 1000);
+}
+
+function togglePause() {
+  state.sessionPaused = !state.sessionPaused;
+  document.getElementById('btn-pause').textContent = state.sessionPaused ? '▶ REPRENDRE' : '⏸ PAUSE';
+}
+
+function stopSession() {
+  if (confirm('Arrêter la séance ?')) endSession();
+}
+
+function endSession() {
+  clearInterval(state.sessionInterval);
+  state.sessionRunning = false;
+  showResults();
+  goTo('results');
+}
+
+// ===== COACH FEEDBACK =====
+function coachFeedback(type) {
+  const slot = getSlot(state.currentMinute);
+  const min = state.currentMinute + 1;
+  const entry = { min, type, slot };
+  state.feedbackLog.push(entry);
+
+  const overlay = document.getElementById('coach-overlay');
+  const msg = document.getElementById('coach-msg');
+  const icon = document.getElementById('fb-icon');
+  const text = document.getElementById('fb-text');
+
+  const configs = {
+    slow: { icon:'🐢', text:'ACCÉLÈRE !', color:'#3a86ff' },
+    ok:   { icon:'✅', text:'PARFAIT !', color:'var(--green)' },
+    fast: { icon:'⚡', text:'RALENTIS !', color:'var(--accent1)' },
+  };
+  const cfg = configs[type];
+  icon.textContent = cfg.icon;
+  text.textContent = cfg.text;
+  msg.style.borderColor = cfg.color;
+  text.style.color = cfg.color;
+
+  overlay.classList.add('show');
+  setTimeout(() => overlay.classList.remove('show'), 1500);
+}
+
+// ===== RESULTS =====
+function showResults() {
+  const totalMinutes = Math.min(state.currentMinute + 1, 30);
+  const courseMins = state.plan.slice(0, totalMinutes).filter(Boolean).length;
+  const speeds = new Set(state.plan.slice(0, totalMinutes).filter(Boolean).map(s => s.pct));
+  const totalDist = state.plan.slice(0, totalMinutes).reduce((acc, s) => acc + (s ? distPerMin(s.kmh) : 0), 0);
+  const okCount = state.feedbackLog.filter(f => f.type === 'ok').length;
+
+  document.getElementById('result-summary').textContent =
+    `${totalMinutes} minutes · ${okCount} passage(s) confirmés par le coach`;
+
+  document.getElementById('result-stats').innerHTML = `
+    <div class="result-stat"><div class="val" style="color:var(--accent1)">${totalMinutes}</div><div class="lbl">Minutes réalisées</div></div>
+    <div class="result-stat"><div class="val" style="color:var(--green)">${speeds.size}</div><div class="lbl">Vitesses différentes</div></div>
+    <div class="result-stat"><div class="val" style="color:var(--yellow)">${Math.round(totalDist/100)/10}</div><div class="lbl">km estimés</div></div>
+    <div class="result-stat"><div class="val" style="color:#3a86ff">${okCount}</div><div class="lbl">Allures confirmées</div></div>
+  `;
+
+  const log = document.getElementById('feedback-log');
+  if (state.feedbackLog.length === 0) {
+    log.innerHTML = '<div class="text-dim">Aucun retour enregistré</div>';
+  } else {
+    log.innerHTML = state.feedbackLog.map(f => {
+      const icons = { slow:'🐢', ok:'✅', fast:'⚡' };
+      const msgs = { slow:'Trop lent', ok:'Bonne allure', fast:'Trop vite' };
+      return `<div class="fb-item ${f.type}">
+        <span>${icons[f.type]}</span>
+        <span><strong>Min ${f.min}</strong> — ${msgs[f.type]}${f.slot ? ` (${f.slot.pct}% VMA)` : ''}</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ===== COACH JOIN =====
+function coachJoin() {
+  // Simplified: just go to session (same device fallback)
+  alert('En attente du coureur... (fonctionnalité multi-appareils via QR code à venir)');
+}
+function coachSameDevice() {
+  if (!state.plan.some(Boolean)) {
+    alert('Le coureur doit d\'abord créer son plan !');
+    return;
+  }
+  goTo('session');
+}
+
+// ===== INIT =====
+updateVmaDisplay();
+</script>
+
+<!-- Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+
+</body>
+</html>
